@@ -6,7 +6,7 @@ import uuid
 class TodoApp:
     def __init__(self, root):  # <-- FIXED HERE
         self.root = root
-        self.root.title("🌟 Manaswitha's Vibrant Todo Tracker")
+        self.root.title("🌟 Pranitha's Vibrant Todo Tracker")
         self.root.geometry("500x670")
         self.root.configure(bg="#fdf6e3")
 
