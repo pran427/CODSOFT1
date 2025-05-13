@@ -1,0 +1,122 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+
+public class NumberGuessingGameApp extends JFrame implements ActionListener {
+    private int numberToGuess;
+    private int attemptsLeft = 7;
+    private int totalScore = 0;
+    private int round = 1;
+
+    private JLabel statusLabel;
+    private JLabel roundLabel;
+    private JLabel attemptsLabel;
+    private JTextField guessField;
+    private JButton guessButton;
+    private JButton newRoundButton;
+
+    public NumberGuessingGameApp() {
+        setTitle("🎮 Manaswitha's Number Guessing Game");
+        setSize(450, 350);
+        setLayout(new GridLayout(7, 1, 8, 8));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        getContentPane().setBackground(new Color(240, 240, 255)); // Light lavender background
+
+        Font titleFont = new Font("Arial", Font.BOLD, 18);
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 15);
+
+        roundLabel = new JLabel("🔁 Round: 1");
+        roundLabel.setFont(titleFont);
+        roundLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(roundLabel);
+
+        attemptsLabel = new JLabel("Attempts left: 7");
+        attemptsLabel.setFont(labelFont);
+        attemptsLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(attemptsLabel);
+
+        statusLabel = new JLabel("Guess the number (1-100):");
+        statusLabel.setFont(labelFont);
+        statusLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(statusLabel);
+
+        guessField = new JTextField();
+        guessField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        guessField.setHorizontalAlignment(JTextField.CENTER);
+        guessField.setBorder(BorderFactory.createLineBorder(new Color(138, 43, 226), 2)); // Violet border
+        add(guessField);
+
+        guessButton = new JButton("Submit Guess");
+        guessButton.setFont(labelFont);
+        guessButton.setBackground(new Color(60, 179, 113)); // Medium sea green
+        guessButton.setForeground(Color.WHITE);
+        guessButton.setFocusPainted(false);
+        guessButton.addActionListener(this);
+        add(guessButton);
+
+        newRoundButton = new JButton("Start New Round");
+        newRoundButton.setFont(labelFont);
+        newRoundButton.setBackground(new Color(70, 130, 180)); // Steel blue
+        newRoundButton.setForeground(Color.WHITE);
+        newRoundButton.setEnabled(false);
+        newRoundButton.setFocusPainted(false);
+        newRoundButton.addActionListener(e -> startNewRound());
+        add(newRoundButton);
+
+        generateNewNumber();
+        setVisible(true);
+    }
+
+    private void generateNewNumber() {
+        numberToGuess = new Random().nextInt(100) + 1;
+        attemptsLeft = 7;
+        attemptsLabel.setText("Attempts left: " + attemptsLeft);
+    }
+
+    private void startNewRound() {
+        round++;
+        roundLabel.setText("🔁 Round: " + round);
+        guessField.setText("");
+        guessButton.setEnabled(true);
+        newRoundButton.setEnabled(false);
+        statusLabel.setText("Guess the number (1-100):");
+        generateNewNumber();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            int guess = Integer.parseInt(guessField.getText().trim());
+            attemptsLeft--;
+            attemptsLabel.setText("Attempts left: " + attemptsLeft);
+
+            if (guess == numberToGuess) {
+                totalScore++;
+                statusLabel.setText("🎉 Correct! You guessed it.");
+                JOptionPane.showMessageDialog(this, "🎉 Correct! Starting new round.");
+                guessButton.setEnabled(false);
+                newRoundButton.setEnabled(true);
+            } else if (guess < numberToGuess) {
+                statusLabel.setText("📉 Too low! Try again.");
+            } else {
+                statusLabel.setText("📈 Too high! Try again.");
+            }
+
+            if (attemptsLeft == 0 && guess != numberToGuess) {
+                statusLabel.setText("❌ No attempts left!");
+                JOptionPane.showMessageDialog(this, "❌ You lost! Number was " + numberToGuess);
+                guessButton.setEnabled(false);
+                newRoundButton.setEnabled(true);
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number!");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new NumberGuessingGameApp());
+    }
+}
